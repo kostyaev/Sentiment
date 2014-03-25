@@ -7,11 +7,16 @@ import play.api.libs.json._
 import play.api.templates.Html
 import securesocial.core.{Identity, Authorization, SecureSocial}
 import models._
+import service.DAO
 
 object Application extends Controller with SecureSocial {
 
+  val opinions = DAO.Opinions;
+
+
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    val result: String = opinions.get(5).foldLeft("")((a: String, b: Opinion) => a + "<p>" + b.message + "</p>")
+    Ok(views.html.index(result))
   }
 
   def securePage = SecuredAction { implicit request =>

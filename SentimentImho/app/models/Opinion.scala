@@ -5,16 +5,16 @@ import scala.slick.driver.PostgresDriver.simple._
 case class Opinion(id: Option[Long] = None,
                    message: String,
                    rating: Int,
-                   isChecked: Boolean)
+                   sentGrade: Option[Int])
 
 
-class Opinions(tag: Tag) extends Table[Opinion](tag, "opinions") {
+class Opinions(tag: Tag) extends Table[Opinion](tag, "opinion") {
 
   def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
   def message = column[String]("message")
   def rating = column[Int]("rating")
-  def isChecked = column[Boolean]("is_checked")
+  def sentGrade = column[Int]("sent_grade", O.Nullable)
 
-  def * = (id.?, message, rating, isChecked) <> (Opinion.tupled, Opinion.unapply)
+  def * = (id.?, message, rating, sentGrade.?) <> (Opinion.tupled, Opinion.unapply)
 
 }

@@ -40,7 +40,7 @@ create table opinion (
   id BIGINT DEFAULT nextval('opinion_id'),
   message TEXT NOT NULL,
   rating SMALLINT,
-  is_checked BOOLEAN,
+  sent_grade SMALLINT,
   PRIMARY KEY (id)
 );
 
@@ -60,7 +60,7 @@ create table checked_opinion (
 # --- !Downs
 drop table token;
 drop table users;
-drop table opinion;
+drop table opinion CASCADE;
 drop table checked_opinion;
 drop sequence user_id;
 drop sequence opinion_id;

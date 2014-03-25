@@ -22,3 +22,7 @@ class CheckedOpinions(tag: Tag) extends Table[CheckedOpinion](tag, "checked_opin
   def * = (id.?, message, rating, sentGrade, opinionId, userId) <> (CheckedOpinion.tupled, CheckedOpinion.unapply)
 
 }
+
+object CheckedOpinionFromOpinion {
+  def apply(op: Opinion, userId: Long): CheckedOpinion = CheckedOpinion(None, op.message, op.rating, op.sentGrade.get,op.id.get,userId)
+}

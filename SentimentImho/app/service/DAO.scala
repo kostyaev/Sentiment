@@ -1,15 +1,19 @@
 package service
 
 import scala.slick.lifted.TableQuery
-import models.{UserFromIdentity, User, Users, Tokens}
+import models._
 import securesocial.core.providers.Token
 import securesocial.core._
 import org.joda.time.DateTime
 import scala.slick.driver.PostgresDriver.simple._
 import com.github.tototoshi.slick.PostgresJodaSupport._
+import models.User
+import securesocial.core.IdentityId
+import securesocial.core.providers.Token
+import scala.Some
 
 
-object DAO extends WithDefaultSession{
+object DAO extends WithDefaultSession {
   val Tokens = new TableQuery[Tokens](new Tokens(_)) {
 
     def findById(tokenId: String): Option[Token] = withSession {
@@ -129,5 +133,31 @@ object DAO extends WithDefaultSession{
     }
 
   }
+
+  val Opinions = new TableQuery[Opinions](new Opinions(_)) {
+
+    def update(opinion: Opinion) = withSession { implicit session =>
+      val updatedOpinion = opinion.copy(id = opinion.id)
+      this.where(_.id === opinion.id).update(updatedOpinion)
+    }
+
+    def get(n: Int): List[Opinion] = withSession { implicit session =>
+      this.take(n).list()
+    }
+  }
+
+  val CheckedOpinions = new TableQuery[CheckedOpinions](new CheckedOpinions(_)) {
+    def save(opinion: CheckedOpinion) = withSession { implicit session =>
+      this.insert(opinion)
+    }
+
+    def saveAs(opinion: Opinion, userId: Long) = withSession { implicit session =>
+      val newOpinion = CheckedOpinionFromOpinion(opinion, userId)
+      this.save(newOpinion)
+    }
+
+  }
+
+
 
 }
