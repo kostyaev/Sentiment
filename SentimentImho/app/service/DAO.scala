@@ -136,14 +136,39 @@ object DAO extends WithDefaultSession {
 
   val Opinions = new TableQuery[Opinions](new Opinions(_)) {
 
+    def refresh = withSession{ implicit session =>
+      val list:  Query[Column[Int], Int] = for {
+        r <- this
+      } yield r.sentGrade
+      list.update(0)
+    }
+
     def update(opinion: Opinion) = withSession { implicit session =>
       val updatedOpinion = opinion.copy(id = opinion.id)
       this.where(_.id === opinion.id).update(updatedOpinion)
     }
 
-    def get(n: Int): List[Opinion] = withSession { implicit session =>
-      this.take(n).list()
+    def update(id: Long, grade: Int) = withSession { implicit session =>
+      val updatedOpinion = findById(id).copy(sentGrade = Option(grade))
+      this.where(_.id === id).update(updatedOpinion)
+      updatedOpinion
     }
+
+    def get(n: Int): List[Opinion] = withSession { implicit session =>
+      this.filter(_.sentGrade === 0).take(n).list()
+    }
+
+    def findById(id:Long) = withSession( implicit session =>
+      this.where(_.id === id).firstOption.get
+    )
+
+    def getSize: Int = withSession ( implicit session => this.list.size)
+
+    def getSizeOfUnchecked: Int = withSession { implicit session =>
+      this.filter(_.sentGrade === 0).list.size
+    }
+
+
   }
 
   val CheckedOpinions = new TableQuery[CheckedOpinions](new CheckedOpinions(_)) {
@@ -155,6 +180,9 @@ object DAO extends WithDefaultSession {
       val newOpinion = CheckedOpinionFromOpinion(opinion, userId)
       this.save(newOpinion)
     }
+
+    def getSize: Int = withSession ( implicit session => this.list.size)
+
 
   }
 

@@ -10,7 +10,7 @@ case class CheckedOpinion(id: Option[Long] = None,
                           userId: Long)
 
 
-class CheckedOpinions(tag: Tag) extends Table[CheckedOpinion](tag, "checked_opinions") {
+class CheckedOpinions(tag: Tag) extends Table[CheckedOpinion](tag, "checked_opinion") {
 
   def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
   def message = column[String]("message")
@@ -24,5 +24,5 @@ class CheckedOpinions(tag: Tag) extends Table[CheckedOpinion](tag, "checked_opin
 }
 
 object CheckedOpinionFromOpinion {
-  def apply(op: Opinion, userId: Long): CheckedOpinion = CheckedOpinion(None, op.message, op.rating, op.sentGrade.get,op.id.get,userId)
+  def apply(op: Opinion, userId: Long): CheckedOpinion = CheckedOpinion(None, op.message, op.rating, op.sentGrade.get, op.id.get, userId)
 }
