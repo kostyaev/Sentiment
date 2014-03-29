@@ -17,7 +17,7 @@
                         @if(UsernamePasswordProvider.withUserNameSupport ) {
                             @helper.inputText(
                                 loginForm.get("username"),
-                                '_label -> Messages("securesocial.signup.username"),
+                                '_label -> "Имя пользователя",
                                 'class -> "form-control"
                             )
                         } else {
@@ -34,7 +34,7 @@
                             'class -> "form-control"
                         )
 
-                        <button id="message_trigger_ok" class="btn btn-block btn-success" type="submit">@Messages("securesocial.login.title")</button>
+                        <button id="message_trigger_ok" class="btn btn-block btn-success" type="submit">Войти</button>
                 </form>
             }
 }.getOrElse {
