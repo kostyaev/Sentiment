@@ -7,7 +7,7 @@ case class CheckedOpinion(id: Option[Long] = None,
                           rating: Int,
                           sentGrade: Int,
                           opinionId: Long,
-                          userId: Long)
+                          userId: String)
 
 
 class CheckedOpinions(tag: Tag) extends Table[CheckedOpinion](tag, "checked_opinion") {
@@ -17,12 +17,12 @@ class CheckedOpinions(tag: Tag) extends Table[CheckedOpinion](tag, "checked_opin
   def rating = column[Int]("rating")
   def sentGrade = column[Int]("sent_grade")
   def opinionId = column[Long]("opinion_id")
-  def userId = column[Long]("user_id")
+  def userId = column[String]("user_id")
 
   def * = (id.?, message, rating, sentGrade, opinionId, userId) <> (CheckedOpinion.tupled, CheckedOpinion.unapply)
 
 }
 
 object CheckedOpinionFromOpinion {
-  def apply(op: Opinion, userId: Long): CheckedOpinion = CheckedOpinion(None, op.message, op.rating, op.sentGrade.get, op.id.get, userId)
+  def apply(op: Opinion, userId: String): CheckedOpinion = CheckedOpinion(None, op.message, op.rating, op.sentGrade.get, op.id.get, userId)
 }

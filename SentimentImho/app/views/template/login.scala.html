@@ -1,28 +1,45 @@
-@(title: String)
+@(loginForm: play.api.data.Form[(String,String)], errorMsg: Option[String] = None)(implicit request: play.api.mvc.RequestHeader)
+
+@import securesocial.core.Registry
+@import securesocial.core.providers.UsernamePasswordProvider.UsernamePassword
+
 
 @template.main("Login page") {
+    <link href="@routes.Assets.at("stylesheets/signin.css")" rel="stylesheet">
+
+
     <div class="container">
-        <div class="login">
-            <div class="login-screen">
-                <div class="login-icon">
-                    <img src="@routes.Assets.at("images/login/icon.png")" alt="Welcome to Sentiment Analysis App" />
-                    <h4>Welcome to <small>Sentiment Analysis App</small></h4>
+
+        <div class="form-signin">
+            <h3 class="form-signin-heading">Авторизация</h3>
+            @defining( Registry.providers.all.values.filter( _.id != UsernamePassword) ) { externalProviders =>
+                @Registry.providers.get(UsernamePassword).map { up =>
+                    @provider("userpass", Some(loginForm))(request)
+                }
+            }
+            <br/>
+            <br/>
+
+            @errorMsg.map { msg =>
+                <div class="alert alert-danger">
+                    @Messages(msg)
                 </div>
+            }
 
-                <div class="login-form">
-                    <div class="form-group">
-                        <input type="text" class="form-control login-field" value="" placeholder="Enter your name" id="login-name" />
-                        <label class="login-field-icon fui-user" for="login-name"></label>
-                    </div>
-
-                    <div class="form-group">
-                        <input type="password" class="form-control login-field" value="" placeholder="Password" id="login-pass" />
-                        <label class="login-field-icon fui-lock" for="login-pass"></label>
-                    </div>
-
-                    <a class="btn btn-primary btn-lg btn-block" href="#">Login</a>
+            @request.flash.get("success").map { msg =>
+                <div class="alert alert-success">
+                    @msg
                 </div>
-            </div>
+            }
+
+            @request.flash.get("error").map { msg =>
+                <div class="alert alert-danger">
+                    @msg
+                </div>
+            }
+
         </div>
-    </div>
+
+    </div> <!-- /container -->
+
 }

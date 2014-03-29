@@ -167,8 +167,6 @@ object DAO extends WithDefaultSession {
     def getSizeOfUnchecked: Int = withSession { implicit session =>
       this.filter(_.sentGrade === 0).list.size
     }
-
-
   }
 
   val CheckedOpinions = new TableQuery[CheckedOpinions](new CheckedOpinions(_)) {
@@ -176,7 +174,7 @@ object DAO extends WithDefaultSession {
       this.insert(opinion)
     }
 
-    def saveAs(opinion: Opinion, userId: Long) = withSession { implicit session =>
+    def saveAs(opinion: Opinion, userId: String) = withSession { implicit session =>
       val newOpinion = CheckedOpinionFromOpinion(opinion, userId)
       this.save(newOpinion)
     }

@@ -14,41 +14,34 @@ object Application extends Controller with SecureSocial {
   val opinions = DAO.Opinions
   val checkedOpinions = DAO.CheckedOpinions
 
+  val LoginPage = Redirect(routes.Application.index)
 
-  def index = Action {
-    val result: String = opinions.get(5).foldLeft("")((a: String, b: Opinion) => a + "<p>" + b.message + "</p>")
-    Ok(views.html.template.index(result))
+
+  def index = SecuredAction {
+    Ok(views.html.template.index("Sentiment Kit"))
   }
 
-  def index2 = Action {
-    Ok(views.html.template.login("login"))
+  def index2(s: String) =  SecuredAction{
+      LoginPage
   }
 
-  def refresh = Action {
+  def refresh = SecuredAction {
     opinions.refresh
     Ok(JsNull)
   }
 
-  def securePage = SecuredAction { implicit request =>
-    Ok(views.html.secure.index(request.user))
-  }
-
-  def json(keyword: String) = Action {
-    Ok(JsObject("keyword" -> JsString(keyword) :: Nil))
-  }
-
-  def setGrade(id: Long, grade: Int) = Action {
-    print("grade: " + grade)
+  def setGrade(id: Long, grade: Int) = SecuredAction { implicit request =>
+    val userId = request.user.identityId.userId
     val opinion: Opinion = opinions.update(id, grade)
-    checkedOpinions.saveAs(opinion, 1)
+    checkedOpinions.saveAs(opinion, userId)
     Ok(JsNull)
   }
 
 
-  def getMessages = Action {
+  def getMessages = SecuredAction {
     val progress = checkedOpinions.getSize
     val total = opinions.getSize
-    val opinionData = opinions.get(5)
+    val opinionData = opinions.get(50)
     Ok(JsObject(
       Seq(
       "messages" -> Json.toJson(opinionData.map(x => JsObject(Seq("id" -> JsNumber(x.id.get), "message" -> JsString(x.message))))),

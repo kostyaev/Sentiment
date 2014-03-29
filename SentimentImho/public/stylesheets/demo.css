@@ -276,6 +276,10 @@
   margin-left: 20px;
 }
 
+label {
+    color: #34495e;
+}
+
 .message_class {
     padding-bottom: 20px;
 }

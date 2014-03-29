@@ -7,7 +7,7 @@ create sequence checked_opinion_id;
 
 create table users (
   id bigint DEFAULT nextval('user_id'),
-  user_id VARCHAR(255) NOT NULL,
+  user_id VARCHAR(255) NOT NULL UNIQUE,
   provider_id VARCHAR(255) NOT NULL,
   firstname VARCHAR(255) NOT NULL,
   lastname VARCHAR(255) NOT NULL,
@@ -50,8 +50,8 @@ create table checked_opinion (
   rating SMALLINT,
   sent_grade SMALLINT,
   opinion_id BIGINT,
-  user_id BIGINT,
-  FOREIGN KEY (user_id) REFERENCES users(id),
+  user_id VARCHAR(255) NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(user_id),
   FOREIGN KEY (opinion_id) REFERENCES opinion(id)
 );
 
@@ -60,8 +60,6 @@ create table checked_opinion (
 # --- !Downs
 drop table token;
 drop table users;
-drop table opinion CASCADE;
 drop table checked_opinion;
 drop sequence user_id;
-drop sequence opinion_id;
 drop sequence checked_opinion_id;

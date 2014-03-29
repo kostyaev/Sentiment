@@ -5,7 +5,7 @@ messageWithId = null
 index = 0
 size = 0
 
-loadData = () -> $.get "/data", (jsdata) ->
+loadData = () -> $.post "/data", (jsdata) ->
   messages = jsdata.messages
   progress = jsdata.progress
   rest = jsdata.rest
