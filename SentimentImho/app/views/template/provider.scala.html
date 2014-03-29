@@ -23,14 +23,14 @@
                         } else {
                             @helper.inputText(
                                 loginForm.get("username"),
-                                '_label -> Messages("securesocial.signup.email1"),
+                                '_label -> "Имя пользователя",
                                 'class -> "form-control"
                             )
                         }
 
                         @helper.inputPassword(
                             loginForm.get("password"),
-                            '_label -> Messages("securesocial.signup.password1"),
+                            '_label -> "Пароль",
                             'class -> "form-control"
                         )
 
