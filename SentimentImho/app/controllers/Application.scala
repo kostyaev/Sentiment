@@ -41,7 +41,7 @@ object Application extends Controller with SecureSocial {
   def getMessages = SecuredAction {
     val progress = checkedOpinions.getSize
     val total = opinions.getSize
-    val opinionData = opinions.get(50)
+    val opinionData = opinions.get(1)
     Ok(JsObject(
       Seq(
       "messages" -> Json.toJson(opinionData.map(x => JsObject(Seq("id" -> JsNumber(x.id.get), "message" -> JsString(x.message))))),
