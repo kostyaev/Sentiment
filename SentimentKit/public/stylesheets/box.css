@@ -1,0 +1,25 @@
+.box-content {
+    padding: 10px;
+    border: 1px solid #dddddd;
+    background: rgba(255, 255, 255, 0.20);
+    display: block;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+}
+
+.text-success {
+    color: #49bf67 !important;
+}
+
+.box-statistic .title {
+    margin: 0;
+    line-height: 28px;
+}
+
+.box-statistic small {
+    text-transform: uppercase;
+}
+
+
+.box-statistic small {
+    text-transform: uppercase;
+}

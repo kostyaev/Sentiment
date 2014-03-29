@@ -1,0 +1,64 @@
+@(title: String)
+
+@template.main(title) {
+    <div class="container">
+        <div class="demo-headline">
+            <h1 class="demo-logo">
+                Sentiment Kit
+                <small>Supervised Learning Tool</small>
+            </h1>
+        </div> <!-- /demo-headline -->
+        <div class="row">
+            <div class = "col-sm-2">
+                <div class="box-content box-statistic">
+                    <h3 id="countTodo" class="title text-danger">0</h3>
+                    <small>Осталось</small>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <br/>
+                <div class="progress">
+                    <div id="result-progress" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+                    </div>
+                </div>
+            </div>
+            <div class = "col-sm-2">
+                <div class="box-content box-statistic">
+                    <h3 id="countDone" class="title text-success">0</h3>
+                    <small>Завершено</small>
+                </div>
+            </div>
+
+        </div>
+
+        <h3 class="demo-panel-title">Текст</h3>
+        <blockquote>
+            <p>
+                <span class="message_class" id="0">
+                </span>
+            </p>
+        </blockquote>
+
+        <div class="row demo-row">
+            <div class="col-xs-3">
+                <a href="#" class="btn btn-block btn-lg btn-danger">Очень негативный</a>
+            </div>
+            <div class="col-xs-2">
+                <a href="#" class="btn btn-block btn-lg btn-warning">Негативный</a>
+            </div>
+            <div class="col-xs-2">
+                <a href="#" class="btn btn-block btn-lg btn-default">Нейтральный</a>
+            </div>
+            <div class="col-xs-2">
+                <a href="#" class="btn btn-block btn-lg btn-info">Позитивный</a>
+            </div>
+            <div class="col-xs-3">
+                <a href="#" class="btn btn-block btn-lg btn-success">Очень позитивный</a>
+            </div>
+
+        </div>
+    </div>
+
+
+
+}
