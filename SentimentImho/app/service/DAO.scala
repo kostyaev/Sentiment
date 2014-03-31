@@ -155,14 +155,16 @@ object DAO extends WithDefaultSession {
     }
 
     def get(n: Int): List[Opinion] = withSession { implicit session =>
-      this.filter(_.sentGrade === 0).take(n).list()
+      this.filter(_.sentGrade === 0).take(n).list
     }
 
     def findById(id:Long) = withSession( implicit session =>
       this.where(_.id === id).firstOption.get
     )
 
-    def getSize: Int = withSession ( implicit session => this.list.size)
+    def getSize: Int = withSession { implicit session =>
+        this.list.size
+    }
 
     def getSizeOfUnchecked: Int = withSession { implicit session =>
       this.filter(_.sentGrade === 0).list.size

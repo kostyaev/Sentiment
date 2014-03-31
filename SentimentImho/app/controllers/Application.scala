@@ -1,10 +1,8 @@
 package controllers
 
-import play.api._
 import play.api.mvc._
-import play.api.libs.json.Json
 import play.api.libs.json._
-import play.api.templates.Html
+
 import securesocial.core.{Identity, Authorization, SecureSocial}
 import models._
 import service.DAO
@@ -16,6 +14,9 @@ object Application extends Controller with SecureSocial {
 
   val LoginPage = Redirect(routes.Application.index)
 
+  var opinionData: Iterator[Opinion] =  opinions.get(50).toIterator
+  var progress = checkedOpinions.getSize
+  var total = opinions.getSize
 
   def index = SecuredAction {
     Ok(views.html.template.index("Sentiment Kit"))
@@ -34,18 +35,25 @@ object Application extends Controller with SecureSocial {
     val userId = request.user.identityId.userId
     val opinion: Opinion = opinions.update(id, grade)
     checkedOpinions.saveAs(opinion, userId)
+    progress = progress + 1
     Ok(JsNull)
   }
 
+  def fillFromDB:Opinion = {
+    if (opinionData.hasNext)
+      opinionData.next()
+    else {
+      opinionData = opinions.get(50).toIterator
+      opinionData.next()
+    }
+  }
 
   def getMessages = SecuredAction {
-    val progress = checkedOpinions.getSize
-    val total = opinions.getSize
-    val opinionData = opinions.get(1)
+    val opinion = fillFromDB
     Ok(JsObject(
       Seq(
-      "messages" -> Json.toJson(opinionData.map(x => JsObject(Seq("id" -> JsNumber(x.id.get), "message" -> JsString(x.message))))),
-      "progress" -> JsNumber(checkedOpinions.getSize),
+      "message" -> JsObject(Seq("id" -> JsNumber(opinion.id.get), "message" -> JsString(opinion.message))),
+      "progress" -> JsNumber(progress),
       "rest" -> JsNumber(total - progress)
       )
     ))

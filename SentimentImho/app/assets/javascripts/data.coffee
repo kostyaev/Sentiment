@@ -1,28 +1,23 @@
-messages = null
+message = null
 progress = null
 rest = null
 messageWithId = null
-index = 0
 size = 0
 
 loadData = () -> $.post "/data", (jsdata) ->
-  messages = jsdata.messages
+  message = jsdata.message
   progress = jsdata.progress
   rest = jsdata.rest
-  size = messages.length
-  index = 0
+  size = message.length
   update()
 
 update = () ->
-  if index >= size then loadData()
-  else
-    messageWithId = messages[index]
+    messageWithId = message
     $(".message_class").html messageWithId.message
     $(".message_class").attr "id", messageWithId.id
-    $("#countDone").html progress++
-    $("#countTodo").html rest--
+    $("#countDone").html progress
+    $("#countTodo").html rest
     $("#result-progress").css "width", (progress * 100 / (progress + rest)) + "%"
-    index++
 
 $ -> loadData()
 
@@ -41,8 +36,7 @@ $ ->
       grade = 4
     else
       grade = 5
-    update()
-    $.get "/grade?id=" + id + "&grade=" + grade
+    $.get "/grade?id=" + id + "&grade=" + grade, () -> loadData()
 
 
 
