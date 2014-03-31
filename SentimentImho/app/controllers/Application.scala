@@ -36,6 +36,7 @@ object Application extends Controller with SecureSocial {
     val opinion: Opinion = opinions.update(id, grade)
     checkedOpinions.saveAs(opinion, userId)
     progress = progress + 1
+    play.Logger.info(s"$userId set $grade to film with id: $id");
     Ok(JsNull)
   }
 
