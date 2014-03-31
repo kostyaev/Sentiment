@@ -14,7 +14,7 @@ object Application extends Controller with SecureSocial {
 
   val LoginPage = Redirect(routes.Application.index)
 
-  var opinionData: Iterator[Opinion] =  opinions.get(50).toIterator
+  var opinionData: Iterator[Opinion] =  opinions.get(100).toIterator
   var progress = checkedOpinions.getSize
   var total = opinions.getSize
 
