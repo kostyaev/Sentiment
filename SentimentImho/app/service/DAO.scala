@@ -144,8 +144,7 @@ object DAO extends WithDefaultSession {
     }
 
     def update(opinion: Opinion) = withSession { implicit session =>
-      val updatedOpinion = opinion.copy(id = opinion.id)
-      this.where(_.id === opinion.id).update(updatedOpinion)
+      this.where(_.id === opinion.id).update(opinion)
     }
 
     def update(id: Long, grade: Int) = withSession { implicit session =>
