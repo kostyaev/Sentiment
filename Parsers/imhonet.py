@@ -11,7 +11,7 @@ conn = psycopg2.connect(conn_string)
 cursor = conn.cursor()
 
 def create_table():
-    cursor.execute("CREATE TABLE opinions (id serial PRIMARY KEY, film_id int, message text, film_rate smallint);")
+    cursor.execute("CREATE TABLE checked_3d_opinions (id serial PRIMARY KEY, film_id int, message text, film_rate smallint);")
     print "Creating table"
 
 
