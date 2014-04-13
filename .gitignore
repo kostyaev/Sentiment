@@ -3,6 +3,7 @@
 *.iml
 *.jar
 *.zip
+.idea/
 
 # sbt specific
 dist/*
