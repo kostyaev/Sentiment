@@ -4,6 +4,7 @@
 *.jar
 *.zip
 .idea/
+.DS_Store
 
 # sbt specific
 dist/*
