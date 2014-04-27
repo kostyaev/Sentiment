@@ -39,11 +39,8 @@
                     <script id="tweetTemplate" type="text/x-jsrender">
                         <li>
                             <div class="media">
-                                <a class="pull-left" href="#">
-                                    <img class="media-object" data-src="holder.js/48x48" alt="48x48" style="width: 48px; height: 48px;" src="{{>user.profile_image_url}}">
-                                </a>
                                 <div class="media-body">
-                                    <h4 class="media-heading"><span>{{>user.name}}</span> <small><i>@@{{>user.screen_name}}</i></small> <small><i>{{>user.created_at}}</i></small></h4>
+                                    <h4 class="media-heading"><span>{{>user.id}}</span> <small><i>@@{{>user.lang}}</i></small> <small><i>{{>user.followersCount}}</i></small></h4>
                                     {{>text}}
                                 </div>
                             </div>
@@ -65,18 +62,12 @@
                 }
 
                 $(document).ready(function(){
-
                     $('#runKeywordsButton').click(function(){
-
                         var keywords = $('#keywordsInput').val();
-
                         $('#commetIframe').remove();
-
-                        $('body').append('<iframe width="700" scrolling="no" height="400" frameborder="0" seamless="seamless" id="commetIframe" src="@routes.Application.watchTweets("").absoluteURL()' + keywords + '"></iframe>');
-
+                        $('body').append('<iframe width="700" scrolling="no" height="400" frameborder="0" seamless="seamless" id="commetIframe" src="@routes.Application.watch("").absoluteURL()' + keywords + '"></iframe>');
                         return false;
                     });
-
                 });
 
             </script>

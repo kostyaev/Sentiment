@@ -19,9 +19,6 @@ object Main extends App {
       case StopCommand => stream ! Http.Close
       case _                   => println("WTF??!!")
     }
-
-    println("CLOSING...");
-    stream ! Http.Close
     commandLoop()
   }
 

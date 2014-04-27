@@ -13,6 +13,12 @@ import reactivemongo.api.QueryOpts
 import java.net.URLEncoder
 import utils.MongoUtils._
 import play.api.libs.Comet
+import akka.actor.{PoisonPill, ActorRef, Props, ActorSystem}
+import core._
+import play.api.libs.oauth.OAuthCalculator
+import scala.Some
+import spray.can.Http
+
 
 object Application extends Controller {
 
@@ -33,6 +39,35 @@ object Application extends Controller {
         case _ => Redirect(routes.Twitter.authenticate)
       }
   }
+
+  var system: ActorSystem = ActorSystem()
+  var sentiment: ActorRef = null
+  var stream: ActorRef = null
+
+  def getSystem() {
+
+  }
+
+  def watch(query: String) = Action {
+    implicit request =>
+      //system = ActorSystem()
+      sentiment = system.actorOf(Props(new SentimentAnalysisActor with CSVLoadedSentimentSets with AnsiConsoleSentimentOutput))
+      stream = system.actorOf(Props(new TweetStreamerActor(TweetStreamerActor.twitterUri, sentiment) with OAuthTwitterAuthorization))
+
+      println("trying to query...")
+      stream ! query
+
+      Ok.chunked(tweetsOut &> Comet(callback = "parent.cometMessage"))
+  }
+
+  def kill = Action {
+    implicit request =>
+      stream ! PoisonPill
+      sentiment ! PoisonPill
+      Ok(views.html.index.render(request))
+  }
+
+
 
   /**
    * Comet observing IO
