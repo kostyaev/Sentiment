@@ -1,0 +1,6 @@
+$ ->
+  $("#stopButton").click ->
+    $.get "/stop"
+
+
+

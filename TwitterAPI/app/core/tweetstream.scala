@@ -4,7 +4,7 @@ import spray.httpx.unmarshalling.{MalformedContent, Unmarshaller, Deserialized}
 import spray.http._
 import spray.json._
 import spray.client.pipelining._
-import akka.actor.{ActorRef, Actor}
+import akka.actor.{PoisonPill, ActorRef, Actor}
 import spray.http.HttpRequest
 import scala.Some
 import domain.{Place, User, Tweet}
@@ -108,7 +108,7 @@ class TweetStreamerActor(uri: Uri, processor: ActorRef) extends Actor with Tweet
 
   def receive: Receive = {
     case query: String =>
-      val body = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), s"track=$query&language=ru")
+      val body = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), s"track=$query")
       val rq = HttpRequest(HttpMethods.POST, uri = uri, entity = body) ~> authorize
       sendTo(io).withResponsesReceivedBy(self)(rq)
 

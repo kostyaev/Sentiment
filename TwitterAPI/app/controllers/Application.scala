@@ -20,6 +20,7 @@ import scala.Some
 import spray.can.Http
 import play.api.libs.oauth.OAuthCalculator
 import scala.Some
+import scala.collection.mutable
 
 
 object Application extends Controller {
@@ -42,35 +43,41 @@ object Application extends Controller {
       }
   }
 
-  var system: ActorSystem = ActorSystem()
-  var sentiment: ActorRef = null
-  var stream: ActorRef = null
-  var output: ActorRef = null
+  val system: ActorSystem = ActorSystem()
+  val output: ActorRef = system.actorOf(Props(new OutputActor))
+  val sentiment: ActorRef = system.actorOf(Props(new CoreNLPActor(output)))
 
-  def getSystem() {
+  val streams: mutable.Stack[ActorRef] = new mutable.Stack[ActorRef]
 
-  }
 
   def watch(query: String) = Action {
     implicit request =>
+      streams.clear()
+      val stream: ActorRef = system.actorOf(Props(new TweetStreamerActor(TweetStreamerActor.twitterUri, sentiment) with OAuthTwitterAuthorization))
+      streams.push(stream)
+
       //system = ActorSystem()
       //sentiment = system.actorOf(Props(new SentimentAnalysisActor with CSVLoadedSentimentSets with AnsiConsoleSentimentOutput))
-      output = system.actorOf(Props(new OutputActor))
-      sentiment = system.actorOf(Props(new CoreNLPActor(output)))
-      stream = system.actorOf(Props(new TweetStreamerActor(TweetStreamerActor.twitterUri, sentiment) with OAuthTwitterAuthorization))
-
-      println("trying to query...")
+      println(s"trying to query: $query")
       stream ! query
 
       Ok.chunked(tweetsOut &> Comet(callback = "parent.cometMessage"))
   }
 
-  def kill = Action {
+//  def kill = Action {
+//    implicit request =>
+//      stream ! Http.Close
+//      //sentiment ! PoisonPill
+//      //output ! PoisonPill
+//      Ok(views.html.index.render(request))
+//  }
+
+  def stop = Action {
     implicit request =>
-      stream ! PoisonPill
-      sentiment ! PoisonPill
-      output ! PoisonPill
+      Logger.logger.info("Stopping actors...")
+      streams foreach(x => x ! PoisonPill)
       Ok(views.html.index.render(request))
+
   }
 
 

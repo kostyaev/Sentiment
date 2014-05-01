@@ -11,6 +11,7 @@
         <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
         <script src="//cdn.jsdelivr.net/jsrender/1.0pre35/jsrender.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src='@routes.Assets.at("javascripts/data.js")'></script>
     </head>
     <body>
         <div class="container-narrow">
@@ -28,8 +29,9 @@
                 <p class="lead">Part of the Scala Play demo for the @@betabeers #bbCDZ Anniversary.</p>
                 <form class="form-search">
                     <input type="text" id="keywordsInput" class="input-medium search-query" />
-                    <button id="runKeywordsButton" class="btn btn-large btn-success">Stream!</button>
+                    <button id="runKeywordsButton" class="btn btn-large btn-success">Stream</button>
                 </form>
+                <button id="stopButton" class="btn btn-large btn-danger">Stop</button>
             </div>
 
             <hr>
@@ -69,6 +71,7 @@
                         $('body').append('<iframe width="700" scrolling="no" height="400" frameborder="0" seamless="seamless" id="commetIframe" src="@routes.Application.watch("").absoluteURL()' + keywords + '"></iframe>');
                         return false;
                     });
+
                 });
 
             </script>
