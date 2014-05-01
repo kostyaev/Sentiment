@@ -20,7 +20,8 @@ object ApplicationBuild extends Build {
     "com.typesafe.akka"      %% "akka-actor"            % "2.2.3",
     "com.typesafe.akka"      %% "akka-slf4j"            % "2.2.3",
     "org.eigengo.monitor"     % "agent-akka"            % "0.2-SNAPSHOT",
-    "org.eigengo.monitor"     % "output-statsd"         % "0.2-SNAPSHOT"
+    "org.eigengo.monitor"     % "output-statsd"         % "0.2-SNAPSHOT",
+    "edu.stanford.nlp" % "stanford-corenlp" % "3.3.1" artifacts (Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp"))
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

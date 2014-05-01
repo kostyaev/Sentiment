@@ -16,6 +16,7 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 import play.api.libs.json.{JsPath, Writes, Json}
 import play.api.libs.functional.syntax._
+import play.api.Logger
 
 trait TwitterAuthorization {
   def authorize: HttpRequest => HttpRequest
@@ -57,6 +58,7 @@ trait TweetMarshaller {
     def apply(entity: HttpEntity): Deserialized[Tweet] = {
       Try {
         val json = JsonParser(entity.asString).asJsObject
+        Logger.logger.info(json.toString)
         (json.fields.get("id_str"), json.fields.get("text"), json.fields.get("place"), json.fields.get("user")) match {
           case (Some(JsString(id)), Some(JsString(text)), Some(place), Some(user: JsObject)) =>
             val x = mkUser(user).fold(x => Left(x), { user =>
@@ -72,8 +74,6 @@ trait TweetMarshaller {
   }
 
   implicit object TweetMarshaller {
-
-
 
     implicit val placeWrites: Writes[Place] = (
         (JsPath \ "country").write[String] and
@@ -95,7 +95,6 @@ trait TweetMarshaller {
 
     import play.api.libs.json._
     def apply(tweet: Tweet): JsValue = Json.toJson(tweet)
-
   }
 }
 
@@ -109,14 +108,14 @@ class TweetStreamerActor(uri: Uri, processor: ActorRef) extends Actor with Tweet
 
   def receive: Receive = {
     case query: String =>
-      val body = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), s"track=$query")
+      val body = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), s"track=$query&language=ru")
       val rq = HttpRequest(HttpMethods.POST, uri = uri, entity = body) ~> authorize
       sendTo(io).withResponsesReceivedBy(self)(rq)
 
     case ChunkedResponseStart(_) =>
     case MessageChunk(entity, _) => {
       TweetUnmarshaller(entity).fold(_ => (), x => controllers.Application.tweetChanel.push(TweetMarshaller(x)))
-      TweetUnmarshaller(entity).fold(_ => (), processor !)
+      //TweetUnmarshaller(entity).fold(_ => (), processor !)
     }
     case _ =>
   }

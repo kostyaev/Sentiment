@@ -2,11 +2,13 @@ package core
 
 import javax.crypto
 import java.nio.charset.Charset
-import spray.http.{HttpEntity, MediaTypes, ContentType, HttpRequest}
+import spray.http._
 import spray.http.HttpHeaders.RawHeader
 import org.parboiled.common.Base64
 import scala.collection.immutable.TreeMap
 import java.net.URLEncoder
+import spray.http.HttpRequest
+import spray.http.HttpHeaders.RawHeader
 
 object OAuth {
   case class Consumer(key: String, secret: String)
@@ -56,10 +58,11 @@ object OAuth {
       val sig = Base64.rfc2045().encodeToString(mac.doFinal(bytes(signatureBaseString)), false)
       mac.reset()
 
+
       val oauth = TreeMap[String, String]() ++ (oauthParams + ("oauth_signature" -> percentEncode(sig))) map { case (k, v) => "%s=\"%s\"" format (k, v) } mkString ", "
 
       // return the signed request
-      httpRequest.withHeaders(List(RawHeader("Authorization", "OAuth " + oauth))).withEntity(newEntity)
+      httpRequest.withHeaders(List(RawHeader("Authorization", "OAuth " + oauth))).withEntity(httpRequest.entity)
     }
   }
 

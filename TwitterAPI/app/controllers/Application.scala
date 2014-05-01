@@ -13,11 +13,13 @@ import reactivemongo.api.QueryOpts
 import java.net.URLEncoder
 import utils.MongoUtils._
 import play.api.libs.Comet
-import akka.actor.{PoisonPill, ActorRef, Props, ActorSystem}
+import akka.actor._
 import core._
 import play.api.libs.oauth.OAuthCalculator
 import scala.Some
 import spray.can.Http
+import play.api.libs.oauth.OAuthCalculator
+import scala.Some
 
 
 object Application extends Controller {
@@ -43,6 +45,7 @@ object Application extends Controller {
   var system: ActorSystem = ActorSystem()
   var sentiment: ActorRef = null
   var stream: ActorRef = null
+  var output: ActorRef = null
 
   def getSystem() {
 
@@ -51,7 +54,9 @@ object Application extends Controller {
   def watch(query: String) = Action {
     implicit request =>
       //system = ActorSystem()
-      sentiment = system.actorOf(Props(new SentimentAnalysisActor with CSVLoadedSentimentSets with AnsiConsoleSentimentOutput))
+      //sentiment = system.actorOf(Props(new SentimentAnalysisActor with CSVLoadedSentimentSets with AnsiConsoleSentimentOutput))
+      output = system.actorOf(Props(new OutputActor))
+      sentiment = system.actorOf(Props(new CoreNLPActor(output)))
       stream = system.actorOf(Props(new TweetStreamerActor(TweetStreamerActor.twitterUri, sentiment) with OAuthTwitterAuthorization))
 
       println("trying to query...")
@@ -64,6 +69,7 @@ object Application extends Controller {
     implicit request =>
       stream ! PoisonPill
       sentiment ! PoisonPill
+      output ! PoisonPill
       Ok(views.html.index.render(request))
   }
 
@@ -77,7 +83,7 @@ object Application extends Controller {
     Logger.debug(s"watchTweets invoked with: $keywords")
 
     //streams from twitter passing the resulting stream to an Iteratee that inserts all incoming data in Mongo
-    WS.url(s"https://stream.twitter.com/1.1/statuses/filter.json?track=" + URLEncoder.encode(keywords, "UTF-8"))
+    WS.url(s"https://stream.twitter.com/1.1/statuses/filter.json?language=ru&track=" + URLEncoder.encode(keywords, "UTF-8"))
       .sign(OAuthCalculator(Twitter.KEY, Twitter.sessionTokenPair.get))
       .postAndRetrieveStream("")(headers => Iteratee.foreach[Array[Byte]] { ba =>
       val msg = new String(ba, "UTF-8")
