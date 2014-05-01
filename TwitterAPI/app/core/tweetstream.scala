@@ -58,7 +58,7 @@ trait TweetMarshaller {
     def apply(entity: HttpEntity): Deserialized[Tweet] = {
       Try {
         val json = JsonParser(entity.asString).asJsObject
-        Logger.logger.info(json.toString)
+        //Logger.logger.info(json.toString)
         (json.fields.get("id_str"), json.fields.get("text"), json.fields.get("place"), json.fields.get("user")) match {
           case (Some(JsString(id)), Some(JsString(text)), Some(place), Some(user: JsObject)) =>
             val x = mkUser(user).fold(x => Left(x), { user =>
@@ -73,29 +73,7 @@ trait TweetMarshaller {
     }.getOrElse(Left(MalformedContent("bad json")))
   }
 
-  implicit object TweetMarshaller {
 
-    implicit val placeWrites: Writes[Place] = (
-        (JsPath \ "country").write[String] and
-        (JsPath \ "name").write[String]
-      )(unlift(Place.unapply))
-
-    implicit val userWrites: Writes[User] = (
-        (JsPath \ "id").write[String] and
-        (JsPath \ "lang").write[String] and
-        (JsPath \ "followersCount").write[Int]
-      )(unlift(User.unapply))
-
-    implicit val tweetWrites: Writes[Tweet] = (
-        (JsPath \ "id").write[String] and
-        (JsPath \ "user").write[User] and
-        (JsPath \ "text").write[String] and
-        (JsPath \ "place").writeNullable[Place]
-      )(unlift(Tweet.unapply))
-
-    import play.api.libs.json._
-    def apply(tweet: Tweet): JsValue = Json.toJson(tweet)
-  }
 }
 
 object TweetStreamerActor {
@@ -114,8 +92,8 @@ class TweetStreamerActor(uri: Uri, processor: ActorRef) extends Actor with Tweet
 
     case ChunkedResponseStart(_) =>
     case MessageChunk(entity, _) => {
-      TweetUnmarshaller(entity).fold(_ => (), x => controllers.Application.tweetChanel.push(TweetMarshaller(x)))
-      //TweetUnmarshaller(entity).fold(_ => (), processor !)
+      //TweetUnmarshaller(entity).fold(_ => (), x => controllers.Application.tweetChanel.push(TweetMarshaller(x)))
+      TweetUnmarshaller(entity).fold(_ => (), processor !)
     }
     case _ =>
   }

@@ -7,16 +7,19 @@ import edu.stanford.nlp.ling.CoreAnnotations
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations
 import spray.http.Uri
+import domain.{TweetToSentimentTweet, Tweet}
 
 object SentimentCategory extends Enumeration {
-  type SentimentCategory = Value
-  val Negative, Neutral, Positive = Value
+  type SentimentCategory = Int
+  val Negative = 0
+  val Neutral = 1
+  val Positive = 2
 }
 
 import  SentimentCategory._
 class CoreNLPActor(output: ActorRef) extends Actor{
 
-  def process(msg : String): SentimentCategory = {
+  def getGrade(msg : String): SentimentCategory = {
     val props = new Properties()
     props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
 
@@ -51,7 +54,7 @@ class CoreNLPActor(output: ActorRef) extends Actor{
   }
 
   def receive: Receive = {
-    case msg: String => output ! process(msg)
+    case tweet: Tweet => output ! TweetToSentimentTweet(tweet, getGrade(tweet.text))
     case _ =>
 
   }
