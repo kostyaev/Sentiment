@@ -1,4 +1,4 @@
-import core.{SentimentCategory, SentimentTools}
+import core.SentimentTools
 import org.specs2.mutable.Specification
 
 class SentimentActorSpec extends Specification with SentimentTools {

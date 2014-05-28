@@ -25,13 +25,14 @@ trait SentimentTools {
       .filter(word => !word.startsWith("#") && !word.startsWith("@") && !word.startsWith("http")  && !word.startsWith("&") )
       .mkString(" ")
 
+    val props = new Properties()
+    props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
+    val pipeline = new StanfordCoreNLP(props)
+
     def getGrade(text : String): SentimentCategory = {
-      Logger.info("Tweet's text: " + text)
+      //Logger.info("Tweet's text: " + text)
       val msg = filter(text)
-      Logger.info("Filtered text: " + msg)
-      val props = new Properties()
-      props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
-      val pipeline = new StanfordCoreNLP(props)
+      //Logger.info("Filtered text: " + msg)
       var mainSentiment = 0
       if (msg != null && msg.length() > 0) {
         var longest = 0
@@ -43,7 +44,7 @@ trait SentimentTools {
           val sentence = it.next()
           val tree = sentence.get(classOf[SentimentCoreAnnotations.AnnotatedTree])
           val sentiment = RNNCoreAnnotations.getPredictedClass(tree)
-          println(s"sentiment: $sentiment")
+          //println(s"sentiment: $sentiment")
           val partText = sentence.toString()
           if (partText.length() > longest) {
             mainSentiment = sentiment
@@ -64,6 +65,7 @@ trait SentimentTools {
 class CoreNLPActor(output: ActorRef) extends Actor with SentimentTools {
   def receive: Receive = {
     case tweet: Tweet =>
+      //Logger.info(tweet.toString)
       output ! TweetToSentimentTweet(tweet, getGrade(tweet.text))
     case _ =>
 

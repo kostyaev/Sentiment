@@ -52,7 +52,7 @@ object Application extends Controller {
 
   def watch(query: String) = Action {
     implicit request =>
-      streams.clear()
+      //streams.clear()
       val stream: ActorRef = system.actorOf(Props(new TweetStreamerActor(TweetStreamerActor.twitterUri, sentiment) with OAuthTwitterAuthorization))
       streams.push(stream)
 
@@ -76,6 +76,7 @@ object Application extends Controller {
     implicit request =>
       Logger.logger.info("Stopping actors...")
       streams foreach(x => x ! PoisonPill)
+      streams.clear()
       Ok(views.html.index.render(request))
 
   }

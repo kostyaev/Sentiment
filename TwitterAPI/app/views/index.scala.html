@@ -6,32 +6,46 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title>Twitter Mongo Streaming</title>
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.css")">
         <link rel="stylesheet" type="text/css" href="@routes.Assets.at("stylesheets/main.css")">
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
         <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
         <script src="//cdn.jsdelivr.net/jsrender/1.0pre35/jsrender.min.js"></script>
-        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+        <script src='@routes.Assets.at("javascripts/speed.js")'></script>
+        <script src='@routes.Assets.at("javascripts/pie_chart.js")'></script>
         <script src='@routes.Assets.at("javascripts/data.js")'></script>
+
     </head>
     <body>
-        <div class="container-narrow">
 
-            <div class="masthead">
-                <ul class="nav nav-pills pull-right">
-                    <li class="active"><a href="https://github.com/47deg/labs-scala-play-mongo">Github</a></li>
-                </ul>
-                <h3 class="muted">Twitter -> MongoDB -> Browser</h3>
+
+        <div class="container-narrow">
+            <div class="row">
+                <div class="col-md-4">
+                    <div id="speed_chart_div" style="width: 200px; height: 250px;"></div>
+                </div>
+
+                <div class="col-md-8">
+                    <div id="pie_chart_div" style="width: 600px; height: 300px;"></div>
+                </div>
+
             </div>
 
-            <hr>
+            <div class="row">
+                <div class="col-md-12">
+                    @*<form class="form-search">*@
+                        <span class="col-md-6">
+                            <input type="text" id="keywordsInput" placeholder="Введите текст для поиска..." size="50"/>
+                        </span>
+                        <span class="col-md-4">
+                            <button id="runKeywordsButton" class="btn btn-large btn-success">Stream</button>
+                            <button id="stopButton" class="btn btn-large btn-danger">Stop</button>
+                        </span>
 
-            <div class="jumbotron">
-                <p class="lead">Part of the Scala Play demo for the @@betabeers #bbCDZ Anniversary.</p>
-                <form class="form-search">
-                    <input type="text" id="keywordsInput" class="input-medium search-query" />
-                    <button id="runKeywordsButton" class="btn btn-large btn-success">Stream</button>
-                    <button id="stopButton" class="btn btn-large btn-danger">Stop</button>
-                </form>
+                    @*</form>*@
+                </div>
             </div>
 
             <hr>
@@ -42,15 +56,15 @@
                         <li>
                             <div class="media">
                                 {{if grade == 0 }}
-                                   <div class="media-body" style="color:red">
+                                   <div class="tweet media-body text-danger">
                                     {{>text}}
                                    </div>
                                 {{else grade == 1}}
-                                    <div class="media-body" style="color:black">
+                                    <div class="tweet media-body text-info" >
                                         {{>text}}
                                     </div>
                                 {{else}}
-                                    <div class="media-body" style="color:green">
+                                    <div class="tweet media-body text-success">
                                         {{>text}}
                                     </div>
                                 {{/if}}
@@ -64,29 +78,32 @@
 
             <script type="text/javascript">
 
-                var cometMessage = function(event) {
-                    console.log('message:' + event);
-                    var tweet = event;
-                    if (tweet) {
-                       $('#list').prepend($("#tweetTemplate").render(tweet));
-                    }
+            var cometMessage = function(event) {
+            console.log('message:' + event);
+            var tweet = event;
+            if (tweet) {
+                if (tweetTime < 0)
+                    tweetTime = Date.now();
+                else {
+                    updateSpeed(1000 / (Date.now() - tweetTime));
+                    tweetTime = Date.now();
                 }
+                updatePieChart(tweet.grade);
+                $('#list').prepend($("#tweetTemplate").render(tweet));
+            }
+            }
 
-                $(document).ready(function(){
-                    $('#runKeywordsButton').click(function(){
-                        var keywords = $('#keywordsInput').val();
-                        $('#commetIframe').remove();
-                        $('body').append('<iframe width="700" scrolling="no" height="400" frameborder="0" seamless="seamless" id="commetIframe" src="@routes.Application.watch("").absoluteURL()' + keywords + '"></iframe>');
-                        return false;
-                    });
+            $(document).ready(function(){
+            $('#runKeywordsButton').click(function(){
+            var keywords = $('#keywordsInput').val();
+            $('#commetIframe').remove();
+            $('body').append('<iframe width="700" scrolling="no" height="400" frameborder="0" seamless="seamless" id="commetIframe" src="@routes.Application.watch("").absoluteURL()' + keywords + '"></iframe>');
+            return false;
+            });
 
-                });
+            });
 
             </script>
-
-            <div class="footer">
-                <p>&copy; 47 Degrees 2013</p>
-            </div>
 
         </div> <!-- /container -->
 

@@ -48,7 +48,10 @@ trait TweetMarshaller {
     def mkPlace(place: JsValue): Deserialized[Option[Place]] = place match {
       case JsObject(fields) =>
         (fields.get("country"), fields.get("name")) match {
-          case (Some(JsString(country)), Some(JsString(name))) => Right(Some(Place(country, name)))
+          case (Some(JsString(country)), Some(JsString(name))) =>
+            Logger.info("Country: " + country.toString + "name: " + name.toString )
+            Right(Some(Place(country, name)))
+
           case _                                               => Left(MalformedContent("bad place"))
         }
       case JsNull => Right(None)

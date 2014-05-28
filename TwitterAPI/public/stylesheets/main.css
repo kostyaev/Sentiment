@@ -12,3 +12,18 @@ body {
     margin: 30px 0;
 }
 
+#speed_chart_div {
+    margin-top: 50px;
+    font-size: 8pt;
+}
+
+
+#keywordsInput {
+    width : auto;
+    height: 40px;
+}
+
+.tweet {
+    margin-top: 20px;
+}
+
