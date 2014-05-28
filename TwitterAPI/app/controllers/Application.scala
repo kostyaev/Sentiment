@@ -45,7 +45,7 @@ object Application extends Controller {
 
   val system: ActorSystem = ActorSystem()
   val output: ActorRef = system.actorOf(Props(new OutputActor))
-  val sentiment: ActorRef = system.actorOf(Props(new CoreNLPActor(output)))
+  val sentiment: ActorRef = system.actorOf(Props(new SentimentActor(output)))
 
   val streams: mutable.Stack[ActorRef] = new mutable.Stack[ActorRef]
 

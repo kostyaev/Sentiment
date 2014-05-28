@@ -56,15 +56,15 @@
                         <li>
                             <div class="media">
                                 {{if grade == 0 }}
-                                   <div class="tweet media-body text-danger">
+                                   <div class="tweet media-body alert-danger">
                                     {{>text}}
                                    </div>
                                 {{else grade == 1}}
-                                    <div class="tweet media-body text-info" >
+                                    <div class="tweet media-body alert-warning" >
                                         {{>text}}
                                     </div>
                                 {{else}}
-                                    <div class="tweet media-body text-success">
+                                    <div class="tweet media-body alert-success">
                                         {{>text}}
                                     </div>
                                 {{/if}}

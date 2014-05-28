@@ -62,7 +62,7 @@ trait SentimentTools {
     }
 }
 
-class CoreNLPActor(output: ActorRef) extends Actor with SentimentTools {
+class SentimentActor(output: ActorRef) extends Actor with SentimentTools {
   def receive: Receive = {
     case tweet: Tweet =>
       //Logger.info(tweet.toString)

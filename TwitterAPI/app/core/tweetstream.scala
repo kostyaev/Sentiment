@@ -89,7 +89,7 @@ class TweetStreamerActor(uri: Uri, processor: ActorRef) extends Actor with Tweet
 
   def receive: Receive = {
     case query: String =>
-      val body = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), s"track=$query")
+      val body = HttpEntity(ContentType(MediaTypes.`application/x-www-form-urlencoded`), s"track=$query&language=en")
       val rq = HttpRequest(HttpMethods.POST, uri = uri, entity = body) ~> authorize
       sendTo(io).withResponsesReceivedBy(self)(rq)
 
