@@ -6,11 +6,8 @@ class SentimentActorSpec extends Specification with SentimentTools {
   "Tweet filter" should {
     "correctly filter tweet's text" in {
        filter("some tweet containing #hashtag") must not contain "#hashtag"
-
        filter("some tweet containing @mention") must not contain "@mention"
-
        filter("some tweet containing http://somesite.com") must not contain "http://somesite.com"
-
        filter("some http://tweet #containing @mention").split(" ").toSeq must containTheSameElementsAs(Seq("some"))
     }
   }
@@ -47,6 +44,4 @@ class SentimentActorSpec extends Specification with SentimentTools {
       getGrade("Tommorow will be rainy") must be equalTo  Neutral
     }
   }
-
-
 }

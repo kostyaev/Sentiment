@@ -15,7 +15,7 @@ function drawChart() {
 
     data = google.visualization.arrayToDataTable([
         ['Label', 'Value'],
-        ['Твит/сек.', 0]
+        ['Твиты/сек.', 0]
     ]);
 
     options = {

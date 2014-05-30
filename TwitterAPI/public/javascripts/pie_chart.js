@@ -16,7 +16,7 @@ function drawPieChart() {
     ]);
 
     pieOptions = {
-        title: 'Диаграмма тональности текстов',
+        title: 'Диаграмма тональности твитов',
         slices: {
             0: { color: 'green' },
             1: { color: 'grey' },
